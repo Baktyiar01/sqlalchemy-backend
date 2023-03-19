@@ -5,17 +5,20 @@ import datetime
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from flask import Flask, Response
 from flask_migrate import Migrate
-from models import db
+from models.general import db
+
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object('settings')
+    app.config.from_object('core.settings')
 
     return app
+
 
 def init_app(app):
     db.init_app(app)
     Migrate(app, db)
+
 
 def json_response(data, status_code=200):
     return Response(
@@ -44,6 +47,7 @@ def orm_to_json(orm):
             d = orm._asdict()
         d.pop('_sa_instance_state', None)
         return d
+
 
 class JSONEncoderCore(json.JSONEncoder):
     def default(self, o):

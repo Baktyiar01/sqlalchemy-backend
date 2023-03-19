@@ -1,12 +1,36 @@
 from flask_sqlalchemy import SQLAlchemy
 
+
 db = SQLAlchemy()
 
-class People(db.Model):
+
+class Company(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128))
+    description = db.Column(db.String(512))
+
+    def __init__(self, title, description):
+        self.title = title
+        self.description = description
+
+
+class Department(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128))
+    description = db.Column(db.String(512))
+    company_id = db.Column(db.Integer, db.ForeignKey(Company.id))
+
+    def __init__(self, title, description):
+        self.title = title
+        self.description = description
+
+
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column(db.String(20), unique=True)
+    department_id = db.Column(db.Integer, db.ForeignKey(Department.id))
 
     def __init__(self, pname, email, phone):
         self.name = pname
@@ -30,11 +54,11 @@ class Position(db.Model):
         self.description = description
 
 
-class PeoplePosition(db.Model):
+class UserPosition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    people_id = db.Column(db.Integer, db.ForeignKey(People.id))
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     position_id = db.Column(db.Integer, db.ForeignKey(Position.id))
 
-    def __init__(self, people_id, position_id):
-        self.people_id = people_id
+    def __init__(self, user_id, position_id):
+        self.user_id = user_id
         self.position_id = position_id
